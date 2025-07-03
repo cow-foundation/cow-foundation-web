@@ -1,0 +1,72 @@
+name: Deploy CoW Foundation Website
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+        description: 'Deployment environment (preview, staging, production)'
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        type: choice
+        description: 'Deployment environment'
+        options:
+          - preview
+          - staging
+          - production
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Set deployment flags
+        id: deployment-flags
+        run: |
+          if [ "${{ inputs.environment }}" = "production" ]; then
+            echo "vercel-env=production" >> $GITHUB_OUTPUT
+            echo "prod-flag=--prod" >> $GITHUB_OUTPUT
+          else
+            echo "vercel-env=preview" >> $GITHUB_OUTPUT
+            echo "prod-flag=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=${{ steps.deployment-flags.outputs.vercel-env }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: vercel build ${{ steps.deployment-flags.outputs.prod-flag }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy ${{ steps.deployment-flags.outputs.prod-flag }} --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        id: deploy
+
+      - name: Output deployment URL
+        run: |
+          echo "🚀 Deployed to: ${{ steps.deploy.outputs.url }}"
+          echo "Environment: ${{ inputs.environment }}"

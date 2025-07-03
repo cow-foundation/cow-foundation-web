@@ -1,0 +1,3 @@
+[submodule "vendor/cowswap"]
+	path = vendor/cowswap
+	url = https://github.com/cowprotocol/cowswap
