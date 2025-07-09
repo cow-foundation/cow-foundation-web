@@ -1,13 +1,8 @@
-const { withNx } = require("@nx/next")
-
 const nextConfig = {
   reactStrictMode: true,
   output: 'export',
   eslint: {
     ignoreDuringBuilds: true,
-  },
-  nx: {
-    svgr: false,
   },
   compiler: {
     styledComponents: true,
@@ -121,4 +116,4 @@ const nextConfig = {
   },
 }
 
-module.exports = withNx(nextConfig)
+module.exports = nextConfig
