@@ -13,12 +13,14 @@ fi
 echo "🔧 Applying patches..."
 # Copy our patches over the cow-fi files
 if [ -d "patches" ]; then
-  # Use rsync to handle special characters in filenames
-  rsync -av --exclude='.DS_Store' patches/ vendor/cowswap/apps/cow-fi/
+  # Use cp to copy patches (excluding .DS_Store files)
+  find patches -name '.DS_Store' -type f -delete 2>/dev/null || true
+  cp -r patches/* vendor/cowswap/apps/cow-fi/
   
   # Also copy libs patches to the monorepo libs directory
   if [ -d "patches/libs" ]; then
-    rsync -av --exclude='.DS_Store' patches/libs/ vendor/cowswap/libs/
+    find patches/libs -name '.DS_Store' -type f -delete 2>/dev/null || true
+    cp -r patches/libs/* vendor/cowswap/libs/
     echo "   Applied libs patches"
   fi
 fi
