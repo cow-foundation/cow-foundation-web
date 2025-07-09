@@ -45,7 +45,7 @@ cd vendor/cowswap && yarn install
 yarn dev
 ```
 
-The website will be available at **http://localhost:3001**
+The website will be available at **http://localhost:3001** (or whatever port is specified in the `next.config.ts` file)
 
 ## Commands
 
