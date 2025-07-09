@@ -1,7 +1,6 @@
-import { withNx } from "@nx/next"
-import { WithNxOptions } from "@nx/next/plugins/with-nx"
+const { withNx } = require("@nx/next")
 
-const nextConfig: WithNxOptions = {
+const nextConfig = {
   reactStrictMode: true,
   output: 'export',
   eslint: {
