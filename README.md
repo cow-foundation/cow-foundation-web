@@ -1,19 +1,20 @@
 # CoW Foundation Website
 
-This repository creates the **cow.foundation** website by using the existing [CoW Protocol website](https://cow.fi) as a base and applying minimal patches on top.
+This repository creates the **cow.foundation** website
 
 ## How It Works
 
 Instead of duplicating code, this repo:
 
-1. **Uses cow-fi as a submodule** - tracks the upstream cow.fi website code
+1. **Uses cow-fi as a submodule** - tracks the upstream cow.fi website code from CoW Protocol
 2. **Applies minimal patches** - only overrides the specific files we want to change
-3. **Runs with cow-fi's build system** - leverages all their dependencies and tooling
+3. **Runs with cow-fi's build system** - leverages their dependencies and tooling
 
 This approach gives us:
+
 - ✅ **Zero code duplication** - we only maintain our changes
 - ✅ **Easy updates** - `git submodule update` pulls upstream changes
-- ✅ **No dependency conflicts** - uses cow-fi's proven setup
+- ✅ **No dependency conflicts** - uses the proven setup from CoW Protocol
 - ✅ **Minimal maintenance** - just patch files we actually change
 - ✅ **Version locked** - submodule pins exact commit hash for deterministic builds
 
@@ -21,10 +22,10 @@ This approach gives us:
 
 ```
 cow-foundation-web/
-├── vendor/cowswap/          # Git submodule (upstream cow-fi codebase)
+├── vendor/cowswap/          # Git submodule (upstream cow-fi codebase from CoW Protocol)
 ├── patches/                 # Our custom overrides
 │   └── app/(main)/page.tsx  # Homepage with "cow.foundation" hero text
-├── scripts/apply-patches.sh # Applies patches to cow-fi
+├── scripts/apply-patches.sh # Applies patches to the cow-fi source
 └── package.json             # Simple commands
 ```
 
@@ -48,29 +49,30 @@ The website will be available at **http://localhost:3001**
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| `yarn dev` | Apply patches + start development server |
-| `yarn build` | Apply patches + build for production |
-| `yarn clean` | Restore original cow-fi files (removes patches) |
-| `yarn apply-patches` | Apply patches only (without running) |
+| Command              | Description                                     |
+| -------------------- | ----------------------------------------------- |
+| `yarn dev`           | Apply patches + start development server        |
+| `yarn build`         | Apply patches + build for production            |
+| `yarn clean`         | Restore original cow-fi files (removes patches) |
+| `yarn apply-patches` | Apply patches only (without running)            |
 
 ## Making Changes
 
 ### Adding New Overrides
 
-1. **Create the patch file** in the `patches/` directory with the same path structure as cow-fi:
+1. **Create the patch file** in the `patches/` directory with the same path structure as the cow-fi source:
+
    ```bash
    # Example: Override a page
    mkdir -p patches/app/(main)/about
    cp vendor/cowswap/apps/cow-fi/app/(main)/about/page.tsx patches/app/(main)/about/
    # Edit patches/app/(main)/about/page.tsx with your changes
-   
+
    # Example: Override configuration
    cp vendor/cowswap/apps/cow-fi/next.config.ts patches/
    # Edit patches/next.config.ts with your changes
-   
-   # Example: Override styles  
+
+   # Example: Override styles
    mkdir -p patches/styles
    cp vendor/cowswap/apps/cow-fi/styles/styled.ts patches/styles/
    # Edit patches/styles/styled.ts with your changes
@@ -86,7 +88,6 @@ The website will be available at **http://localhost:3001**
 - **Homepage Hero Text**: `patches/app/(main)/page.tsx`
   - Changes "Don't get milked!" to "cow.foundation"
   - Keeps all other functionality identical
-  
 - **Next.js Configuration**: `patches/next.config.ts`
   - Custom webpack config for cow.foundation
   - Additional redirects and settings
@@ -94,6 +95,7 @@ The website will be available at **http://localhost:3001**
 ### Updating from Upstream
 
 1. **Update the submodule**:
+
    ```bash
    git submodule update --remote vendor/cowswap
    git add vendor/cowswap
@@ -101,6 +103,7 @@ The website will be available at **http://localhost:3001**
    ```
 
 2. **Test your patches** still work:
+
    ```bash
    yarn dev
    ```
@@ -112,7 +115,7 @@ The website will be available at **http://localhost:3001**
 The `scripts/apply-patches.sh` script:
 
 1. **Creates backups** of original files (in `.originals/`)
-2. **Copies patch files** over the cow-fi source files
+2. **Copies patch files** over the upstream source files
 3. **Preserves git history** - changes are temporary, not committed to the submodule
 
 When you run `yarn clean`, it restores the original files using `git checkout`.
@@ -131,7 +134,7 @@ git ls-tree HEAD vendor/cowswap
 # Output: 160000 commit 198db528011ebaf4c2787be1d3413e2e105d2125
 ```
 
-This ensures everyone gets the exact same cow-fi version, making patches predictable and builds deterministic.
+This ensures everyone gets the exact same upstream version, making patches predictable and builds deterministic.
 
 ## Development Workflow
 
@@ -151,6 +154,7 @@ yarn build
 ## Deployment
 
 After running `yarn build`, the static files are generated in:
+
 ```
 vendor/cowswap/apps/cow-fi/out/
 ```
@@ -177,7 +181,3 @@ A: Compare files in `patches/` with `vendor/cowswap/apps/cow-fi/` - anything in 
 2. Make your changes in the `patches/` directory
 3. Test with `yarn dev`
 4. Submit a pull request
-
-## License
-
-This repository follows the same license as the upstream CoW Protocol codebase.
