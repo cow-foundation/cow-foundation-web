@@ -34,28 +34,10 @@ const nextConfig = {
       },
       {
         test: /\.(mp4|webm)$/,
-        use: {
-          loader: "file-loader",
-          options: {
-            publicPath: "/_next/static/videos/",
-            outputPath: "static/videos/",
-            name: "[name].[hash].[ext]",
-            esModule: false,
-          },
+        type: "asset/resource",
+        generator: {
+          filename: "static/videos/[name].[hash][ext]",
         },
-      },
-      {
-        test: /\.[tj]sx?$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: "babel-loader",
-            options: {
-              presets: ["next/babel"],
-              plugins: ["babel-plugin-macros"],
-            },
-          },
-        ],
       }
     )
 
