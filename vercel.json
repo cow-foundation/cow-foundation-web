@@ -1,5 +1,6 @@
 {
-  "buildCommand": "yarn build",
-  "outputDirectory": "dist",
-  "installCommand": "yarn install"
+  "root": "vendor/cowswap/apps/cow-fi",
+  "buildCommand": "../../scripts/apply-patches.sh && cd ../.. && yarn install && npx next build",
+  "outputDirectory": "out",
+  "installCommand": "cd ../../ && yarn install"
 }
