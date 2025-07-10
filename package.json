@@ -4,27 +4,11 @@
   "private": true,
   "scripts": {
     "apply-patches": "./scripts/apply-patches.sh",
-    "dev": "yarn apply-patches && cd vendor/cowswap/apps/cow-fi && npx next dev --port 3001",
-    "build": "yarn apply-patches && cd vendor/cowswap && yarn install && yarn build:cowfi && cp -r apps/cow-fi/out ../dist",
-    "clean": "git -C vendor/cowswap checkout -- apps/cow-fi/"
-  },
-  "dependencies": {
-    "@apollo/client": "^3.1.5",
-    "@lingui/core": "^4.10.0",
-    "@lingui/macro": "^4.10.0",
-    "@lingui/react": "^4.10.0",
-    "babel-plugin-macros": "^3.1.0",
-    "graphql": "^16.0.0",
-    "lil-gui": "^0.20.0",
-    "next": "^14.0.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "styled-components": "^6.0.0"
+    "dev": "yarn apply-patches && cd vendor/cowswap && yarn start:cowfi",
+    "build": "yarn apply-patches && cd vendor/cowswap && yarn install && cd apps/cow-fi && npx next build",
+    "clean": "git -C vendor/cowswap checkout -- apps/cow-fi/ && git -C vendor/cowswap checkout -- libs/"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "typescript": "^5.0.0"
+    "pino-pretty": "^13.0.0"
   }
 }

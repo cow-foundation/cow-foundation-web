@@ -2,12 +2,6 @@
 
 import React, { useRef, useEffect, useCallback, useState } from 'react'
 import styled from 'styled-components'
-import GUI from 'lil-gui'
-
-// --- Controls ---
-// Set to false to disable the lil-gui panel for production.
-const ENABLE_GUI = false
-// ----------------
 
 // --- Animation Configuration ---
 // Use this object to easily tweak the animation's appearance.
@@ -181,10 +175,9 @@ const interpolateColor = (progress: number): string => {
 
 export const BinaryCowLogoCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const animationRef = useRef<number>()
+  const animationRef = useRef<number | undefined>(undefined)
   const particlesRef = useRef<Particle[]>([])
   const timeRef = useRef(0)
-  const [configVersion, setConfigVersion] = useState(0)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
   // Update canvas dimensions and trigger re-initialization
@@ -290,56 +283,9 @@ export const BinaryCowLogoCanvas: React.FC = () => {
     }
   }, [updateDimensions])
 
-  // Effect for setting up the GUI controls
-  useEffect(() => {
-    if (!ENABLE_GUI) return
-
-    const gui = new GUI()
-    gui.title("Animation Controls")
-
-    const forceReset = () => setConfigVersion(v => v + 1)
-
-    // --- Spacing & Font ---
-    const layoutFolder = gui.addFolder('Layout & Spacing')
-    layoutFolder.add(ANIMATION_CONFIG, 'PARTICLE_SPACING', 4, 40, 1).name('Particle Spacing').onFinishChange(forceReset)
-    layoutFolder.add(ANIMATION_CONFIG, 'FONT_SIZE', 8, 40, 1).name('Font Size').onFinishChange(forceReset)
-    layoutFolder.add(ANIMATION_CONFIG, 'PARTICLE_SPEED', 0.01, 0.2, 0.01).name('Particle Speed')
-    
-    // --- Shape & Ratio ---
-    const shapeFolder = gui.addFolder('Shape & Ratio')
-    shapeFolder.add(ANIMATION_CONFIG, 'SHAPE_SCALE', 0.1, 2.0, 0.05).name('Shape Scale').onFinishChange(forceReset)
-    shapeFolder.add(ANIMATION_CONFIG, 'ONE_TO_ZERO_RATIO', 0, 1, 0.05).name('1:0 Ratio').onFinishChange(forceReset)
-    shapeFolder.add(ANIMATION_CONFIG, 'BINARY_FLIP_CHANCE', 0, 0.1, 0.001).name('Flip Chance')
-    
-    // --- Movement ---
-    const movementFolder = gui.addFolder('Organic Movement')
-    movementFolder.add(ANIMATION_CONFIG, 'ORGANIC_MOVEMENT_X_SCALE', 0, 10, 0.5).name('X Scale')
-    movementFolder.add(ANIMATION_CONFIG, 'ORGANIC_MOVEMENT_Y_SCALE', 0, 10, 0.5).name('Y Scale')
-    movementFolder.add(ANIMATION_CONFIG, 'ORGANIC_MOVEMENT_X_SPEED', 0, 1, 0.05).name('X Speed')
-    movementFolder.add(ANIMATION_CONFIG, 'ORGANIC_MOVEMENT_Y_SPEED', 0, 1, 0.05).name('Y Speed')
-
-    // --- Opacity ---
-    const opacityFolder = gui.addFolder('Opacity')
-    opacityFolder.add(ANIMATION_CONFIG, 'BASE_OPACITY', 0, 1, 0.05).name('Base Opacity')
-    opacityFolder.add(ANIMATION_CONFIG, 'OPACITY_VARIANCE', 0, 1, 0.05).name('Variance')
-    opacityFolder.add(ANIMATION_CONFIG, 'OPACITY_CYCLE_SPEED', 0, 2, 0.05).name('Cycle Speed')
-
-    // --- Color ---
-    const colorFolder = gui.addFolder('Color Shifting')
-    colorFolder.addColor(ANIMATION_CONFIG, 'COLOR_1').name('Color 1')
-    colorFolder.addColor(ANIMATION_CONFIG, 'COLOR_2').name('Color 2')
-    colorFolder.addColor(ANIMATION_CONFIG, 'COLOR_3').name('Color 3')
-    colorFolder.add(ANIMATION_CONFIG, 'COLOR_SHIFT_SPEED', 0, 2, 0.05).name('Speed')
-    colorFolder.add(ANIMATION_CONFIG, 'COLOR_SHIFT_DISTANCE_FACTOR', 0, 0.02, 0.001).name('Distance Factor')
-
-    // Cleanup function to remove the GUI when the component unmounts
-    return () => {
-      gui.destroy()
-    }
-  }, [initAnimation])
 
 
-  // Main animation effect. It re-runs whenever the configVersion or dimensions change.
+  // Main animation effect. It re-runs whenever dimensions change.
   useEffect(() => {
     // Skip if dimensions haven't been initialized yet
     if (dimensions.width === 0 || dimensions.height === 0) return
@@ -403,7 +349,7 @@ export const BinaryCowLogoCanvas: React.FC = () => {
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [initAnimation, configVersion, dimensions])
+  }, [initAnimation, dimensions])
 
   return (
     <CanvasContainer>

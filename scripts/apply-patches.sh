@@ -11,13 +11,22 @@ if [ ! -d "vendor/cowswap/apps/cow-fi/.originals" ]; then
 fi
 
 echo "🔧 Applying patches..."
-# Copy our patches over the cow-fi files
+# Copy our patches over the appropriate directories
 if [ -d "patches" ]; then
   # Use cp to copy patches (excluding .DS_Store files)
   find patches -name '.DS_Store' -type f -delete 2>/dev/null || true
-  cp -r patches/* vendor/cowswap/apps/cow-fi/
   
-  # Also copy libs patches to the monorepo libs directory
+  # Copy app-specific patches to cow-fi (excluding libs)
+  for item in patches/*; do
+    if [ -f "$item" ] || [ -d "$item" ]; then
+      # Skip the libs directory - it goes to the monorepo root
+      if [ "$(basename "$item")" != "libs" ]; then
+        cp -r "$item" vendor/cowswap/apps/cow-fi/
+      fi
+    fi
+  done
+  
+  # Copy libs patches to the monorepo libs directory
   if [ -d "patches/libs" ]; then
     find patches/libs -name '.DS_Store' -type f -delete 2>/dev/null || true
     cp -r patches/libs/* vendor/cowswap/libs/
