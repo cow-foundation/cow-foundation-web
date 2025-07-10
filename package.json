@@ -5,7 +5,7 @@
   "scripts": {
     "apply-patches": "./scripts/apply-patches.sh",
     "dev": "yarn apply-patches && cd vendor/cowswap/apps/cow-fi && npx next dev --port 3001",
-    "build": "yarn apply-patches && cd vendor/cowswap && yarn install && cd apps/cow-fi && npx next build && cp -r out ../../../../dist",
+    "build": "yarn apply-patches && cd vendor/cowswap && yarn install && yarn build:cowfi && cp -r apps/cow-fi/out ../dist",
     "clean": "git -C vendor/cowswap checkout -- apps/cow-fi/"
   },
   "dependencies": {
