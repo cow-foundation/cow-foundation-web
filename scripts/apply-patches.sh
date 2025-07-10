@@ -50,6 +50,14 @@ if [ -d "vendor/cowswap/apps/cow-fi/app/[...not_found]" ]; then
   echo "   Removed [...not_found] directory"
 fi
 
+echo "🔧 Fixing cowswap postinstall script..."
+# Replace 'yarn run patch-package' with 'npx patch-package' in cowswap's package.json
+if [ -f "vendor/cowswap/package.json" ]; then
+  sed -i.bak 's/"postinstall": "yarn run patch-package"/"postinstall": "npx patch-package"/' vendor/cowswap/package.json
+  rm -f vendor/cowswap/package.json.bak  # Clean up backup file
+  echo "   Updated postinstall script to use npx"
+fi
+
 echo "✅ Patches applied!"
 echo "📁 cow.foundation customizations are now active"
 echo "🚀 Ready to run: cd vendor/cowswap && yarn start:cowfi"
