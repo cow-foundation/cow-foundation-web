@@ -72,7 +72,7 @@ The website will be available at **http://localhost:3001**
    cp vendor/cowswap/apps/cow-fi/next.config.ts patches/
    # Edit patches/next.config.ts with your changes
 
-   # Example: Override styles
+   # Example: Override style
    mkdir -p patches/styles
    cp vendor/cowswap/apps/cow-fi/styles/styled.ts patches/styles/
    # Edit patches/styles/styled.ts with your changes
