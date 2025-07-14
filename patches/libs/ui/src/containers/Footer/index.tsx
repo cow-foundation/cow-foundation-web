@@ -100,7 +100,7 @@ const PRODUCT_LOGO_LINKS: {
 ]
 
 const GLOBAL_FOOTER_DESCRIPTION =
-  'CoW Foundation is dedicated to advancing the CoW ecosystem through research, development, and community support.'
+  'CoW Foundation is dedicated to advancing the CoW ecosystem through research, development, and community support. CoW Foundation Limited is a Cayman Islands foundation company without members and shareholders.'
 
 const GLOBAL_FOOTER_NAV_ITEMS: MenuItem[] = [
   {

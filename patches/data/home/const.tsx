@@ -124,15 +124,12 @@ export const PRODUCT_CONTAINERS = (
         margin="0 auto 100px"
       >
         <SectionTitleText
-          lineHeight={1.6}
+          lineHeight={1.4}
           lineHeightMobile={1.8}
+          fontSize={43}
           fontSizeMobile={24}
         >
-          CoW Foundation{" "}
-          <span className="wordtag-orange">powers the governance</span> of CoW
-          DAO and its products providing operational support so you can{" "}
-          <span className="wordtag-purple">build and innovate</span> with{" "}
-          <span className="wordtag-blue">confidence</span>.
+          CoW Foundation powers the governance of CoW DAO and its products providing operational support so you can build and innovate confidence.
         </SectionTitleText>
 
         <SectionTitleText
@@ -140,6 +137,7 @@ export const PRODUCT_CONTAINERS = (
           fontSize={26}
           fontSizeMobile={16}
           textAlign="center"
+          fontWeight={400}
         >
           By aligning every initiative with the CoWmunity's vision and best
           practices, the Foundation creates the conditions for the CoW ecosystem
