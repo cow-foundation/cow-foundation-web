@@ -1,183 +1,72 @@
 # CoW Foundation Website
 
-This repository creates the **cow.foundation** website
+This repository builds the **cow.foundation** website by applying a minimal set of patches to the official CoW Protocol `cow-fi` application.
 
 ## How It Works
 
-Instead of duplicating code, this repo:
+Instead of maintaining a separate fork, this repository uses a lightweight, patch-based approach:
 
-1. **Uses cow-fi as a submodule** - tracks the upstream cow.fi website code from CoW Protocol
-2. **Applies minimal patches** - only overrides the specific files we want to change
-3. **Runs with cow-fi's build system** - leverages their dependencies and tooling
+1.  **Git Submodule:** It includes the official `cowswap` monorepo as a git submodule, ensuring we can easily pull in upstream updates.
+2.  **Minimal Patches:** We maintain a `patches/` directory containing only the files we need to override. This makes our custom changes explicit and easy to manage.
+3.  **Direct Build:** The build process intentionally bypasses the monorepo's complex Nx build system and runs a standard `next build` directly on the `cow-fi` application.
 
 This approach gives us:
 
-- ✅ **Zero code duplication** - we only maintain our changes
-- ✅ **Easy updates** - `git submodule update` pulls upstream changes
-- ✅ **No dependency conflicts** - uses the proven setup from CoW Protocol
-- ✅ **Minimal maintenance** - just patch files we actually change
-- ✅ **Version locked** - submodule pins exact commit hash for deterministic builds
+- ✅ **Minimal Maintenance:** We only manage the files we change.
+- ✅ **Easy Upstream Updates:** `git submodule update` pulls in the latest from CoW Protocol.
+- ✅ **No Forking:** Avoids the overhead of maintaining a full fork.
+- ✅ **Version Locked:** The submodule is pinned to a specific commit for deterministic and reproducible builds.
 
-## Repository Structure
+## Prerequisites
 
-```
-cow-foundation-web/
-├── vendor/cowswap/          # Git submodule (upstream cow-fi codebase from CoW Protocol)
-├── patches/                 # Our custom overrides
-│   └── app/(main)/page.tsx  # Homepage with "cow.foundation" hero text
-├── scripts/apply-patches.sh # Applies patches to the cow-fi source
-└── package.json             # Simple commands
-```
+- **Node.js:** Version `20.0.0` or higher is required.
+- **Yarn:** Version `1.x` is used for dependency management.
 
 ## Quick Start
 
 ```bash
-# Clone with submodules
+# Clone the repository with its submodules
 git clone --recursive <this-repo-url>
+cd cow-foundation-web
 
-# If already cloned, initialize submodules
-git submodule update --init --recursive
+# Install dependencies for the Vercel deployment helper
+yarn install
 
-# Install dependencies in the monorepo
-cd vendor/cowswap && yarn install
-
-# Run development server
+# Run the development server
 yarn dev
 ```
 
-The website will be available at **http://localhost:3001**
+The development server will be available at **http://localhost:3001**. The `yarn dev` command handles applying patches and installing all monorepo dependencies automatically.
 
 ## Commands
 
-| Command              | Description                                     |
-| -------------------- | ----------------------------------------------- |
-| `yarn dev`           | Apply patches + start development server        |
-| `yarn build`         | Apply patches + build for production            |
-| `yarn clean`         | Restore original cow-fi files (removes patches) |
-| `yarn apply-patches` | Apply patches only (without running)            |
+| Command              | Description                                                      |
+| -------------------- | ---------------------------------------------------------------- |
+| `yarn dev`           | Applies patches and starts the local development server.         |
+| `yarn build`         | Applies patches and runs a production build of the `cow-fi` app. |
+| `yarn clean`         | Restores original `cow-fi` files, removing all applied patches.  |
+| `yarn apply-patches` | Applies patches without starting the server or building.         |
 
-## Making Changes
+## Deployment on Vercel
 
-### Adding New Overrides
+The project is configured for seamless deployment on Vercel via the `vercel.json` file.
 
-1. **Create the patch file** in the `patches/` directory with the same path structure as the cow-fi source:
+### How the Vercel Build Works
 
-   ```bash
-   # Example: Override a page
-   mkdir -p patches/app/(main)/about
-   cp vendor/cowswap/apps/cow-fi/app/(main)/about/page.tsx patches/app/(main)/about/
-   # Edit patches/app/(main)/about/page.tsx with your changes
-
-   # Example: Override configuration
-   cp vendor/cowswap/apps/cow-fi/next.config.ts patches/
-   # Edit patches/next.config.ts with your changes
-
-   # Example: Override style
-   mkdir -p patches/styles
-   cp vendor/cowswap/apps/cow-fi/styles/styled.ts patches/styles/
-   # Edit patches/styles/styled.ts with your changes
-   ```
-
-2. **Run the development server** to see your changes:
-   ```bash
-   yarn dev
-   ```
-
-### Current Overrides
-
-- **Homepage Hero Text**: `patches/app/(main)/page.tsx`
-  - Changes "Don't get milked!" to "cow.foundation"
-  - Keeps all other functionality identical
-- **Next.js Configuration**: `patches/next.config.ts`
-  - Custom webpack config for cow.foundation
-  - Additional redirects and settings
-
-### Updating from Upstream
-
-1. **Update the submodule**:
-
-   ```bash
-   git submodule update --remote vendor/cowswap
-   git add vendor/cowswap
-   git commit -m "Update to latest cow-fi"
-   ```
-
-2. **Test your patches** still work:
-
-   ```bash
-   yarn dev
-   ```
-
-3. **Fix any conflicts** if upstream changed files you've patched
-
-## How Patches Work
-
-The `scripts/apply-patches.sh` script:
-
-1. **Creates backups** of original files (in `.originals/`)
-2. **Copies patch files** over the upstream source files
-3. **Preserves git history** - changes are temporary, not committed to the submodule
-
-When you run `yarn clean`, it restores the original files using `git checkout`.
-
-## Submodule Version Lock
-
-The submodule is locked to a specific commit hash for reproducible builds:
-
-```bash
-# Check current locked version
-git submodule status
-# Output: 198db528011ebaf4c2787be1d3413e2e105d2125 vendor/cowswap (v1.49.2-1662-g198db5280)
-
-# See what commit is stored in main repo
-git ls-tree HEAD vendor/cowswap
-# Output: 160000 commit 198db528011ebaf4c2787be1d3413e2e105d2125
-```
-
-This ensures everyone gets the exact same upstream version, making patches predictable and builds deterministic.
-
-## Development Workflow
-
-```bash
-# Make changes to patch files
-vim patches/app/(main)/page.tsx
-
-# Apply and test
-yarn dev
-
-# Build for production
-yarn build
-
-# Deploy the built files from vendor/cowswap/apps/cow-fi/out/
-```
-
-## Deployment
-
-After running `yarn build`, the static files are generated in:
-
-```
-vendor/cowswap/apps/cow-fi/out/
-```
-
-Deploy this directory to your static hosting service (Vercel, Netlify, etc.).
+1.  **Install Command:** The `installCommand` first installs root dependencies (like `next` and `pino-pretty`), applies our patches, then navigates into `vendor/cowswap` to install the full monorepo dependencies.
+2.  **Build Command:** The `buildCommand` navigates directly to the `cow-fi` app directory and runs a standard `npx next build`. This bypasses the monorepo's Nx build system.
+3.  **Framework Hint:** We use `"framework": null` to tell Vercel to treat the output as a standard static site, preventing it from looking for Next.js-specific files that don't exist in a static export.
+4.  **Root Dependencies:** The `package.json` at the repository root includes `next` and `pino-pretty` in `devDependencies`. These are required to solve Vercel-specific issues:
+    - `next`: Its presence satisfies Vercel's framework detection, which runs _before_ our build command.
+    - `pino-pretty`: This is a missing runtime dependency for the `cow-fi` application that is required for the build to succeed.
 
 ## Troubleshooting
 
-**Q: I get dependency errors**  
-A: Make sure you've installed dependencies in the monorepo: `cd vendor/cowswap && yarn install`
+**Q: My local build is failing with dependency errors.**
+A: Ensure you are using **Node.js v20.0.0 or higher**. The upstream `cowswap` project uses packages that require a modern Node version.
 
-**Q: My patches aren't applied**  
-A: Run `yarn apply-patches` to apply them manually, or `yarn clean && yarn dev` to reset and reapply
+**Q: My Vercel build is failing.**
+A: Check the `vercel.json` file. It contains a carefully crafted set of commands to navigate the monorepo structure and build the application correctly. Also, ensure the `devDependencies` in the root `package.json` are present.
 
-**Q: Nx build errors**  
-A: This setup bypasses Nx and runs Next.js directly to avoid monorepo complexity
-
-**Q: How do I see what's different from upstream?**  
-A: Compare files in `patches/` with `vendor/cowswap/apps/cow-fi/` - anything in `patches/` is our custom code
-
-## Contributing
-
-1. Fork this repository
-2. Make your changes in the `patches/` directory
-3. Test with `yarn dev`
-4. Submit a pull request
+**Q: How do I see what's different from upstream?**
+A: Compare the files in the `patches/` directory with their counterparts in `vendor/cowswap/apps/cow-fi/`. The `patches/` directory is the source of truth for all our custom code.
