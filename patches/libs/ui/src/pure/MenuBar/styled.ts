@@ -598,6 +598,7 @@ export const RootNavItem = styled.li<{ isOpen?: boolean; mobileMode?: boolean }>
       font-size: 21px;
       font-weight: ${Font.weight.semibold};
       padding: 12px 16px 12px 6px;
+      min-height: 56px;
     `}
   > svg {
     height: 8px;
