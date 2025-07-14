@@ -320,11 +320,11 @@ export default function Page() {
               We're always looking for new ways to support the CoW ecosystem.
               CoW Foundation can be contacted at{" "}
               <a
-                href="mailto:contact@cow.foundation"
+                href="mailto:info@cow.foundation"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                contact@cow.foundation
+                info@cow.foundation
               </a>
             </SectionTitleDescription>
           </SectionTitleWrapper>
