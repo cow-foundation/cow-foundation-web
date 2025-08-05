@@ -35,7 +35,7 @@ import {
 import { Color, MenuItem, ProductLogo, ProductVariant } from '@cowprotocol/ui'
 
 export interface FooterProps {
-  description?: string
+  description?: ReactNode
   navItems?: MenuItem[]
   productVariant: ProductVariant
   additionalFooterContent?: ReactNode
