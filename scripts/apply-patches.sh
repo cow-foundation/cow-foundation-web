@@ -11,14 +11,25 @@ if [ ! -d "vendor/cowswap/apps/cow-fi/.originals" ]; then
 fi
 
 echo "🔧 Applying patches..."
-# Copy our patches over the cow-fi files
+# Copy our patches over the appropriate directories
 if [ -d "patches" ]; then
-  # Use rsync to handle special characters in filenames
-  rsync -av --exclude='.DS_Store' patches/ vendor/cowswap/apps/cow-fi/
+  # Use cp to copy patches (excluding .DS_Store files)
+  find patches -name '.DS_Store' -type f -delete 2>/dev/null || true
   
-  # Also copy libs patches to the monorepo libs directory
+  # Copy app-specific patches to cow-fi (excluding libs)
+  for item in patches/*; do
+    if [ -f "$item" ] || [ -d "$item" ]; then
+      # Skip the libs directory - it goes to the monorepo root
+      if [ "$(basename "$item")" != "libs" ]; then
+        cp -r "$item" vendor/cowswap/apps/cow-fi/
+      fi
+    fi
+  done
+  
+  # Copy libs patches to the monorepo libs directory
   if [ -d "patches/libs" ]; then
-    rsync -av --exclude='.DS_Store' patches/libs/ vendor/cowswap/libs/
+    find patches/libs -name '.DS_Store' -type f -delete 2>/dev/null || true
+    cp -r patches/libs/* vendor/cowswap/libs/
     echo "   Applied libs patches"
   fi
 fi
@@ -46,6 +57,14 @@ fi
 if [ -d "vendor/cowswap/apps/cow-fi/app/[...not_found]" ]; then
   rm -rf vendor/cowswap/apps/cow-fi/app/\[...not_found\]
   echo "   Removed [...not_found] directory"
+fi
+
+echo "🔧 Fixing cowswap postinstall script..."
+# Replace 'yarn run patch-package' with 'npx patch-package' in cowswap's package.json
+if [ -f "vendor/cowswap/package.json" ]; then
+  sed -i.bak 's/"postinstall": "yarn run patch-package"/"postinstall": "npx patch-package"/' vendor/cowswap/package.json
+  rm -f vendor/cowswap/package.json.bak  # Clean up backup file
+  echo "   Updated postinstall script to use npx"
 fi
 
 echo "✅ Patches applied!"

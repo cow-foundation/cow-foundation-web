@@ -11,3 +11,7 @@ export async function getTokenDetails(tokenId: string): Promise<any> {
 export async function getTokenDetailsForWhitelisting(): Promise<any[]> {
   return []
 }
+
+export async function getTokensInfo(): Promise<any[]> {
+  return []
+}
